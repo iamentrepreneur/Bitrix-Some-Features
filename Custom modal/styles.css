@@ -1,0 +1,123 @@
+/* ——— БАЗА ——— */
+#overlay-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 20, 20, .55);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .25s ease, visibility .25s ease;
+  z-index: 1000; /* ниже, чем модалка */
+}
+
+#overlay-bg.show-max {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Блокируем скролл страницы, когда открыт overlay (современные браузеры) */
+body:has(#overlay-bg.show-max) {
+  overflow: hidden;
+}
+
+/* ——— КНОПКА-ОТКРЫВАТЕЛЬ ——— */
+[data-modal-open] { cursor: pointer; }
+
+/* ——— МОДАЛКА ——— */
+.modal {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, calc(-50% + 10px)); /* лёгкий сдвиг для анимации */
+  z-index: 1010;
+  width: min(640px, 92vw);
+  max-height: 86vh;
+  background: #fff;
+  color: #222;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  transition: opacity .25s ease, visibility .25s ease, transform .25s ease;
+}
+
+/* Состояние «открыто» */
+.modal.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+}
+
+/* ——— ВНУТРЕННЯЯ СЕТКА ——— */
+.modal__header,
+.modal__footer {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+}
+
+.modal__footer {
+  border-bottom: 0;
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+
+.modal__title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.modal__close {
+  margin-left: auto;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 6px;
+  line-height: 0;
+  border-radius: 8px;
+  transition: background .2s ease, transform .06s ease;
+}
+
+.modal__close:active { transform: scale(.98); }
+.modal__close:hover { background: rgba(0,0,0,.05); }
+
+.modal__body {
+  padding: 20px;
+  overflow: auto;            /* прокрутка внутри модалки при длинном содержимом */
+  overscroll-behavior: contain;
+}
+
+/* ——— ВАРИАНТЫ РАЗМЕРОВ ——— */
+.modal--sm { width: min(420px, 92vw); }
+.modal--lg { width: min(880px, 96vw); }
+.modal--xl { width: min(1200px, 96vw); }
+
+/* ——— АДАПТИВ ——— */
+@media (max-width: 480px) {
+  .modal {
+    border-radius: 14px;
+    max-height: 90vh;
+  }
+  .modal__header, .modal__body, .modal__footer {
+    padding-left: 16px; padding-right: 16px;
+  }
+}
+
+/* ——— ТЁМНАЯ ТЕМА (если понадобится) ——— */
+@media (prefers-color-scheme: dark) {
+  #overlay-bg { background: rgba(0,0,0,.6); }
+  .modal {
+    background: #1d1f23;
+    color: #eaeaea;
+    box-shadow: 0 20px 60px rgba(0,0,0,.55);
+  }
+  .modal__header, .modal__footer {
+    border-color: rgba(255,255,255,.08);
+  }
+  .modal__close:hover { background: rgba(255,255,255,.06); }
+}
